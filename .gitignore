@@ -1,0 +1,17 @@
+node_modules/
+dist/
+loader/
+www/
+build/
+.netlify/
+.svelte-kit/
+.output/
+.vercel/
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example
+__screenshots__/
+.idea/
+.vitest-attachments/

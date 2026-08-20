@@ -1,0 +1,240 @@
+:root {
+	--rf-font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	--rf-color-surface: #ffffff;
+	--rf-color-surface-muted: #f2f4f7;
+	--rf-color-border: #e2e5ea;
+	--rf-color-text: #1c2430;
+	--rf-color-text-muted: #5d6b7a;
+	--rf-color-accent: #e8590c;
+	--rf-color-accent-soft: #fff1e8;
+	--rf-color-danger: #d64545;
+	--rf-color-success: #2f9e63;
+	--rf-color-warning: #d99400;
+	--rf-radius-sm: 6px;
+	--rf-radius-md: 12px;
+	--rf-radius-lg: 18px;
+	--rf-shadow-sm: 0 1px 2px rgba(24, 34, 48, 0.08);
+	--rf-shadow-md: 0 10px 30px rgba(24, 34, 48, 0.12);
+	--rf-space-xs: 4px;
+	--rf-space-sm: 8px;
+	--rf-space-md: 16px;
+	--rf-space-lg: 24px;
+
+	--page-max: 1180px;
+	--page-bg: #f7f8fa;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: var(--rf-font-family);
+	background: var(--page-bg);
+	color: var(--rf-color-text);
+	line-height: 1.55;
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--rf-color-accent);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	line-height: 1.25;
+	margin: 0;
+}
+
+.page {
+	width: 100%;
+	max-width: var(--page-max);
+	margin: 0 auto;
+	padding: var(--rf-space-lg) var(--rf-space-md) 64px;
+}
+
+.page-header {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--rf-space-md);
+	margin-bottom: var(--rf-space-lg);
+}
+
+.page-header h1 {
+	font-size: 1.65rem;
+}
+
+.page-header p {
+	margin: 4px 0 0;
+	color: var(--rf-color-text-muted);
+	font-size: 0.92rem;
+}
+
+.card-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+	gap: var(--rf-space-md);
+}
+
+.panel {
+	background: var(--rf-color-surface);
+	border: 1px solid var(--rf-color-border);
+	border-radius: var(--rf-radius-lg);
+	padding: var(--rf-space-lg);
+}
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	font: inherit;
+	font-size: 0.9rem;
+	font-weight: 600;
+	border-radius: var(--rf-radius-md);
+	border: 1px solid transparent;
+	padding: 0.6rem 1.05rem;
+	cursor: pointer;
+	transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+	text-decoration: none;
+}
+
+.btn:hover {
+	text-decoration: none;
+}
+
+.btn-primary {
+	background: var(--rf-color-accent);
+	color: #fff;
+}
+
+.btn-primary:hover {
+	background: #cf4d09;
+}
+
+.btn-secondary {
+	background: var(--rf-color-surface);
+	border-color: var(--rf-color-border);
+	color: var(--rf-color-text);
+}
+
+.btn-secondary:hover {
+	border-color: var(--rf-color-accent);
+	color: var(--rf-color-accent);
+}
+
+.btn-ghost {
+	background: transparent;
+	color: var(--rf-color-text-muted);
+}
+
+.btn-ghost:hover {
+	color: var(--rf-color-accent);
+}
+
+.btn-danger {
+	background: var(--rf-color-danger);
+	color: #fff;
+}
+
+.btn-danger:hover {
+	background: #bf3838;
+}
+
+.btn:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.field label {
+	font-size: 0.82rem;
+	font-weight: 600;
+	color: var(--rf-color-text-muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+	font: inherit;
+	color: var(--rf-color-text);
+	background: var(--rf-color-surface);
+	border: 1px solid var(--rf-color-border);
+	border-radius: var(--rf-radius-md);
+	padding: 0.6rem 0.75rem;
+	outline: none;
+	width: 100%;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+	border-color: var(--rf-color-accent);
+	box-shadow: 0 0 0 3px var(--rf-color-accent-soft);
+}
+
+.field .error {
+	color: var(--rf-color-danger);
+	font-size: 0.78rem;
+}
+
+.field.invalid input,
+.field.invalid select,
+.field.invalid textarea {
+	border-color: var(--rf-color-danger);
+}
+
+.muted {
+	color: var(--rf-color-text-muted);
+}
+
+.spinner {
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	border: 3px solid var(--rf-color-border);
+	border-top-color: var(--rf-color-accent);
+	animation: spin 0.7s linear infinite;
+	margin: 48px auto;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.alert {
+	border-radius: var(--rf-radius-md);
+	padding: var(--rf-space-md);
+	font-size: 0.9rem;
+	background: rgba(214, 69, 69, 0.1);
+	color: var(--rf-color-danger);
+	border: 1px solid rgba(214, 69, 69, 0.25);
+}
+
+@media (max-width: 640px) {
+	.page {
+		padding: var(--rf-space-md) var(--rf-space-sm) 48px;
+	}
+}

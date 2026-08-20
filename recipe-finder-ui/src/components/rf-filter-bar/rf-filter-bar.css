@@ -1,0 +1,64 @@
+:host {
+  display: block;
+  font-family: var(--rf-font-family);
+}
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--rf-space-md);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rf-space-xs);
+  min-width: 170px;
+}
+
+.group span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--rf-color-text-muted);
+}
+
+select {
+  font: inherit;
+  color: var(--rf-color-text);
+  background: var(--rf-color-surface);
+  border: 1px solid var(--rf-color-border);
+  border-radius: var(--rf-radius-md);
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  outline: none;
+}
+
+select:focus {
+  border-color: var(--rf-color-accent);
+  box-shadow: 0 0 0 3px var(--rf-color-accent-soft);
+}
+
+.extra {
+  display: flex;
+  align-items: center;
+  gap: var(--rf-space-sm);
+  margin-left: auto;
+}
+
+.reset {
+  font: inherit;
+  font-size: 0.85rem;
+  border: 1px solid var(--rf-color-border);
+  background: var(--rf-color-surface-muted);
+  color: var(--rf-color-text-muted);
+  border-radius: var(--rf-radius-md);
+  padding: 0.55rem 0.9rem;
+  cursor: pointer;
+}
+
+.reset:hover {
+  color: var(--rf-color-accent);
+  border-color: var(--rf-color-accent);
+}

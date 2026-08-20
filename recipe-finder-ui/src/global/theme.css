@@ -1,0 +1,22 @@
+:root {
+  --rf-font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --rf-color-surface: #ffffff;
+  --rf-color-surface-muted: #f4f5f7;
+  --rf-color-border: #e2e5ea;
+  --rf-color-text: #1c2430;
+  --rf-color-text-muted: #5d6b7a;
+  --rf-color-accent: #e8590c;
+  --rf-color-accent-soft: #fff1e8;
+  --rf-color-danger: #d64545;
+  --rf-color-success: #2f9e63;
+  --rf-color-warning: #d99400;
+  --rf-radius-sm: 6px;
+  --rf-radius-md: 12px;
+  --rf-radius-lg: 18px;
+  --rf-shadow-sm: 0 1px 2px rgba(24, 34, 48, 0.08);
+  --rf-shadow-md: 0 10px 30px rgba(24, 34, 48, 0.12);
+  --rf-space-xs: 4px;
+  --rf-space-sm: 8px;
+  --rf-space-md: 16px;
+  --rf-space-lg: 24px;
+}

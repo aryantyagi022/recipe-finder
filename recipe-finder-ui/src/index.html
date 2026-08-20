@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>recipe-finder-ui playground</title>
+    <script type="module" src="/build/recipe-finder-ui.esm.js"></script>
+    <script nomodule src="/build/recipe-finder-ui.js"></script>
+    <style>
+      body {
+        font-family: var(--rf-font-family);
+        background: #f8f9fb;
+        margin: 0;
+        padding: 32px;
+        display: grid;
+        gap: 24px;
+        max-width: 960px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <rf-search-bar label="Search" placeholder="Try 'pasta'"></rf-search-bar>
+    <rf-filter-bar id="filters"></rf-filter-bar>
+    <div class="grid">
+      <rf-recipe-card id="card" badge="Popular">
+        <rf-tag slot="footer" tone="accent" label="30 min"></rf-tag>
+      </rf-recipe-card>
+    </div>
+    <rf-rating value="4"></rf-rating>
+    <rf-empty-state heading="No recipes" message="Adjust your filters and try again."></rf-empty-state>
+
+    <script type="module">
+      document.getElementById('card').recipe = {
+        id: '52772',
+        title: 'Teriyaki Chicken Casserole',
+        image: 'https://www.themealdb.com/images/media/meals/wvpsxx1468256321.jpg',
+        category: 'Chicken',
+        area: 'Japanese',
+        tags: ['Meat', 'Casserole'],
+      };
+      document.getElementById('filters').groups = [
+        { id: 'category', label: 'Category', options: [{ value: 'Beef', label: 'Beef' }] },
+        { id: 'area', label: 'Cuisine', options: [{ value: 'Italian', label: 'Italian' }] },
+      ];
+    </script>
+  </body>
+</html>

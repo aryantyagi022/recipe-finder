@@ -1,0 +1,32 @@
+:host {
+  display: inline-block;
+  font-family: var(--rf-font-family);
+}
+
+.rating {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.star {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--rf-color-border);
+  cursor: pointer;
+  transition: color 0.12s ease, transform 0.12s ease;
+}
+
+.star.filled {
+  color: var(--rf-color-warning);
+}
+
+.rating:not(.readonly) .star:hover {
+  transform: scale(1.15);
+}
+
+.readonly .star {
+  cursor: default;
+}
