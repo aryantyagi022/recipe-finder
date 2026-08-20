@@ -1,6 +1,7 @@
 [build]
-  command = "npm --prefix recipe-finder-ui install && npm --prefix recipe-finder-ui run build && npm --prefix web install && npm --prefix web run build"
-  publish = "web/build"
+  base = "web"
+  command = "npm ci && npm run build"
+  publish = "build"
 
 [build.environment]
   NODE_VERSION = "20"

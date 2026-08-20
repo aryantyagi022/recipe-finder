@@ -87,16 +87,30 @@ focused element and reference-counts its scroll lock so stacked modals behave co
 
 ## Setup
 
-Build and link the component library first — the app consumes its build output, not its source.
+The app consumes `recipe-finder-ui` from the npm registry, so it installs on its own:
+
+```bash
+cd web
+npm install
+```
+
+Only work on the library if you intend to change the components:
 
 ```bash
 cd recipe-finder-ui
 npm install
 npm run build
-
-cd ../web
-npm install
 ```
+
+To try library changes in the app before publishing them, link the local build:
+
+```bash
+cd web
+npm install ../recipe-finder-ui
+```
+
+Undo that with `npm install recipe-finder-ui@^0.1.0` once you are done — the committed
+`package-lock.json` must resolve to the registry tarball.
 
 ## Starting the development server
 
@@ -149,11 +163,18 @@ installs it into a temporary project and resolves every declared entry point thr
 `exports` map (`.`, `./components`, `./loader`, `./theme.css`), so the published tarball contains
 only build output and type declarations.
 
-After the first publish, point the app at the registry version instead of the local folder:
+Versioning follows semver against the public surface — the custom element tag names, their props,
+their events, their slots and the `--rf-*` theme tokens. Renaming or removing any of those, or
+changing an event payload, is a major bump; adding a prop, event, slot or token with a
+backwards-compatible default is a minor bump; everything else is a patch. Always release with
+`npm version`, which writes the tag, rather than editing the version by hand.
+
+After publishing a new version, bump the app's dependency so the committed lockfile pins the
+registry tarball:
 
 ```bash
 cd web
-npm install recipe-finder-ui@^0.1.0
+npm install recipe-finder-ui@^0.2.0
 ```
 
 ## Deployment (Netlify)
@@ -162,13 +183,14 @@ npm install recipe-finder-ui@^0.1.0
 
 ```toml
 [build]
-  command = "npm --prefix recipe-finder-ui install && npm --prefix recipe-finder-ui run build && npm --prefix web install && npm --prefix web run build"
-  publish = "web/build"
+  base = "web"
+  command = "npm ci && npm run build"
+  publish = "build"
 ```
 
-Connect the repository in Netlify and deploy — no environment variables are required. The
-command builds the component library before the app, so the site deploys whether the app
-resolves `recipe-finder-ui` from the local workspace or from npm.
+The build only installs the app; `recipe-finder-ui` is pulled from npm like any other dependency,
+so the library is never compiled during deploy. Connect the repository in Netlify and deploy — no
+environment variables are required.
 
 ## Assumptions
 
