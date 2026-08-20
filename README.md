@@ -150,14 +150,13 @@ npm install recipe-finder-ui@^0.1.0
 
 ```toml
 [build]
-  base = "web"
-  command = "npm run build"
-  publish = "build"
+  command = "npm --prefix recipe-finder-ui install && npm --prefix recipe-finder-ui run build && npm --prefix web install && npm --prefix web run build"
+  publish = "web/build"
 ```
 
-Connect the repository in Netlify and deploy — no environment variables are required. The build
-resolves `recipe-finder-ui` from npm, so make sure the library has been published (or the
-`file:` dependency vendored) before the first deploy.
+Connect the repository in Netlify and deploy — no environment variables are required. The
+command builds the component library before the app, so the site deploys whether the app
+resolves `recipe-finder-ui` from the local workspace or from npm.
 
 ## Assumptions
 
