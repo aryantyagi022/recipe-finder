@@ -41,7 +41,10 @@
   },
   "files": [
     "dist/",
-    "loader/"
+    "loader/",
+    "!dist/**/*.test.*",
+    "!dist/**/*.unit.*",
+    "!dist/**/*.cmp.*"
   ],
   "publishConfig": {
     "access": "public"
