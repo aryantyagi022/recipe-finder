@@ -11,7 +11,8 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"test": "vitest run",
-		"test:watch": "vitest"
+		"test:watch": "vitest",
+		"refresh-areas": "node scripts/refresh-areas.mjs"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-netlify": "^6.0.4",

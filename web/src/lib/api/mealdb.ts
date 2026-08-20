@@ -1,4 +1,5 @@
 import type { Recipe, RecipeSummary } from '$lib/types';
+import { AREAS } from './areas';
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
 const CACHE_LIMIT = 50;
@@ -137,9 +138,8 @@ export async function listCategories(fetcher?: typeof fetch): Promise<string[]> 
 	return (data.meals ?? []).map((entry) => entry.strCategory).filter(Boolean);
 }
 
-export async function listAreas(fetcher?: typeof fetch): Promise<string[]> {
-	const data = await request<{ meals: { strArea: string }[] | null }>('/list.php?a=list', fetcher);
-	return (data.meals ?? []).map((entry) => entry.strArea).filter(Boolean);
+export async function listAreas(): Promise<string[]> {
+	return [...AREAS];
 }
 
 export async function discover(

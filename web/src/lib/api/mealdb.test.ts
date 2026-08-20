@@ -1,5 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { clearRequestCache, discover, normalizeMeal, searchRecipes, toSummary } from '$lib/api/mealdb';
+import {
+	clearRequestCache,
+	discover,
+	listAreas,
+	normalizeMeal,
+	searchRecipes,
+	toSummary
+} from '$lib/api/mealdb';
 
 const meal = {
 	idMeal: '52772',
@@ -161,5 +168,33 @@ describe('request cache', () => {
 
 		expect(afterFill).toBe(60);
 		expect((fetcher as unknown as { mock: { calls: unknown[] } }).mock.calls.length).toBe(61);
+	});
+});
+
+describe('listAreas', () => {
+	it('returns the curated areas without hitting the network', async () => {
+		const fetcher = vi.fn();
+		const areas = await listAreas();
+
+		expect(fetcher).not.toHaveBeenCalled();
+		expect(areas.length).toBeGreaterThan(0);
+		expect(new Set(areas).size).toBe(areas.length);
+	});
+
+	it('uses the values the filter endpoint expects rather than demonyms', async () => {
+		const areas = await listAreas();
+
+		expect(areas).toContain('India');
+		expect(areas).toContain('United States');
+		expect(areas).toContain('France');
+		expect(areas).not.toContain('Indian');
+		expect(areas).not.toContain('American');
+	});
+
+	it('is returned as a fresh array so callers cannot mutate the source', async () => {
+		const first = await listAreas();
+		first.push('Atlantis');
+
+		expect(await listAreas()).not.toContain('Atlantis');
 	});
 });
