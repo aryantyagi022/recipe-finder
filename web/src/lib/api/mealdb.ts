@@ -1,6 +1,7 @@
 import type { Recipe, RecipeSummary } from '$lib/types';
 
 const BASE_URL = 'https://www.themealdb.com/api/json/v1/1';
+const CACHE_LIMIT = 50;
 
 const cache = new Map<string, Promise<unknown>>();
 
@@ -23,7 +24,11 @@ interface MealDbResponse {
 
 async function request<T>(path: string, fetcher: typeof fetch = fetch): Promise<T> {
 	const cached = cache.get(path);
-	if (cached) return cached as Promise<T>;
+	if (cached) {
+		cache.delete(path);
+		cache.set(path, cached);
+		return cached as Promise<T>;
+	}
 
 	const pending = fetcher(`${BASE_URL}${path}`).then((response) => {
 		if (!response.ok) {
@@ -35,7 +40,17 @@ async function request<T>(path: string, fetcher: typeof fetch = fetch): Promise<
 	cache.set(path, pending);
 	pending.catch(() => cache.delete(path));
 
+	while (cache.size > CACHE_LIMIT) {
+		const oldest = cache.keys().next();
+		if (oldest.done) break;
+		cache.delete(oldest.value);
+	}
+
 	return pending as Promise<T>;
+}
+
+export function clearRequestCache() {
+	cache.clear();
 }
 
 function parseIngredients(meal: MealDbMeal) {
@@ -74,30 +89,31 @@ export function normalizeMeal(meal: MealDbMeal): Recipe {
 	};
 }
 
-export function toSummary(meal: MealDbMeal): RecipeSummary {
+export function toSummary(meal: MealDbMeal, known: Partial<RecipeSummary> = {}): RecipeSummary {
 	return {
 		id: meal.idMeal,
 		title: meal.strMeal,
 		image: meal.strMealThumb ?? '',
 		category: meal.strCategory ?? '',
 		area: meal.strArea ?? '',
-		origin: 'api'
+		origin: 'api',
+		...known
 	};
 }
 
 export async function searchRecipes(term: string, fetcher?: typeof fetch): Promise<RecipeSummary[]> {
 	const data = await request<MealDbResponse>(`/search.php?s=${encodeURIComponent(term)}`, fetcher);
-	return (data.meals ?? []).map(toSummary);
+	return (data.meals ?? []).map((meal) => toSummary(meal));
 }
 
 export async function filterByCategory(category: string, fetcher?: typeof fetch): Promise<RecipeSummary[]> {
 	const data = await request<MealDbResponse>(`/filter.php?c=${encodeURIComponent(category)}`, fetcher);
-	return (data.meals ?? []).map(toSummary);
+	return (data.meals ?? []).map((meal) => toSummary(meal, { category }));
 }
 
 export async function filterByArea(area: string, fetcher?: typeof fetch): Promise<RecipeSummary[]> {
 	const data = await request<MealDbResponse>(`/filter.php?a=${encodeURIComponent(area)}`, fetcher);
-	return (data.meals ?? []).map(toSummary);
+	return (data.meals ?? []).map((meal) => toSummary(meal, { area }));
 }
 
 export async function getRecipeById(id: string, fetcher?: typeof fetch): Promise<Recipe | null> {
@@ -146,7 +162,7 @@ export async function discover(
 			filterByArea(area, fetcher)
 		]);
 		const areaIds = new Set(byArea.map((recipe) => recipe.id));
-		return byCategory.filter((recipe) => areaIds.has(recipe.id));
+		return byCategory.filter((recipe) => areaIds.has(recipe.id)).map((recipe) => ({ ...recipe, area }));
 	}
 
 	if (category) return filterByCategory(category, fetcher);

@@ -2,7 +2,7 @@
 	import { bindProps } from '$lib/actions/bindProps';
 	import { planner } from '$lib/state/planner.svelte';
 	import type { MealSlot, RecipeSummary } from '$lib/types';
-	import { MEAL_SLOTS, WEEK_DAYS, formatDay, formatWeekRange, weekDates } from '$lib/utils/date';
+	import { MEAL_SLOTS, WEEK_DAYS, formatDay, formatWeekRange, shiftWeek, weekDates } from '$lib/utils/date';
 
 	interface Props {
 		recipe: RecipeSummary | null;
@@ -14,19 +14,22 @@
 	let dayIndex = $state(0);
 	let slot = $state<MealSlot>('dinner');
 	let confirmation = $state('');
+	let weekKey = $state(planner.weekKey);
 
-	const dates = $derived(weekDates(planner.weekKey));
+	const dates = $derived(weekDates(weekKey));
+	const occupying = $derived(planner.mealIn(weekKey, dayIndex, slot));
 
 	$effect(() => {
 		if (recipe) {
 			confirmation = '';
+			weekKey = planner.weekKey;
 		}
 	});
 
 	function assign() {
 		if (!recipe) return;
-		planner.assign(dayIndex, slot, recipe);
-		confirmation = `${recipe.title} planned for ${WEEK_DAYS[dayIndex]} ${slot}.`;
+		planner.assignTo(weekKey, dayIndex, slot, recipe);
+		confirmation = `${recipe.title} planned for ${WEEK_DAYS[dayIndex]} ${slot}, ${formatWeekRange(weekKey)}.`;
 	}
 </script>
 
@@ -36,17 +39,27 @@
 >
 	{#if recipe}
 		<p class="lead">
-			Planning <strong>{recipe.title}</strong> for the week of {formatWeekRange(planner.weekKey)}.
+			Planning <strong>{recipe.title}</strong> for the week of {formatWeekRange(weekKey)}.
 		</p>
 
-		<div class="field">
-			<label for="plan-week">Week</label>
+		<div class="field" role="group" aria-labelledby="plan-week-label">
+			<span id="plan-week-label">Week</span>
 			<div class="week-nav">
-				<button type="button" class="btn btn-secondary" onclick={() => planner.goToWeek(-1)}>
+				<button
+					type="button"
+					class="btn btn-secondary"
+					aria-label="Previous week"
+					onclick={() => (weekKey = shiftWeek(weekKey, -1))}
+				>
 					‹
 				</button>
-				<span id="plan-week">{formatWeekRange(planner.weekKey)}</span>
-				<button type="button" class="btn btn-secondary" onclick={() => planner.goToWeek(1)}>
+				<span>{formatWeekRange(weekKey)}</span>
+				<button
+					type="button"
+					class="btn btn-secondary"
+					aria-label="Next week"
+					onclick={() => (weekKey = shiftWeek(weekKey, 1))}
+				>
 					›
 				</button>
 			</div>
@@ -72,10 +85,10 @@
 			</div>
 		</div>
 
-		{#if planner.meal(dayIndex, slot)}
+		{#if occupying}
 			<p class="warning">
 				{WEEK_DAYS[dayIndex]} {slot} already has
-				<strong>{planner.meal(dayIndex, slot)?.title}</strong> — saving will replace it.
+				<strong>{occupying.title}</strong> — saving will replace it.
 			</p>
 		{/if}
 

@@ -55,9 +55,16 @@ properties:
 | `rf-rating` | `value`, `max`, `readonly`, `label` | `rfRate` | — |
 | `rf-modal` | `open`, `heading`, `size`, `dismissible` | `rfClose` | `header`, default, `footer` |
 | `rf-empty-state` | `icon`, `heading`, `message` | — | default |
-| `rf-tag` | `label`, `tone`, `removable` | `rfRemove` | — |
+| `rf-tag` | `label`, `value`, `tone`, `removable` | `rfRemove` | default |
 
 See [`recipe-finder-ui/readme.md`](recipe-finder-ui/readme.md) for the full API and theming guide.
+Each component also has a generated `readme.md` next to its source, produced by Stencil's
+`docs-readme` output target from the JSDoc on its props and events.
+
+Accessibility notes: `rf-recipe-card` exposes its title as a real button so keyboard users can
+open a recipe without swallowing events from the favourite button or slotted footer actions, and
+`rf-modal` moves focus into the dialog, traps Tab, closes on Escape, restores the previously
+focused element and reference-counts its scroll lock so stacked modals behave correctly.
 
 ### How the app integrates it
 
@@ -115,6 +122,7 @@ Stencil also serves a standalone component playground at http://localhost:3333.
 cd recipe-finder-ui
 npm test            # Vitest: unit specs plus real-browser component specs (Playwright chromium)
 npm run build
+npm run smoke       # packs the tarball, installs it in a temp dir and resolves every export
 
 cd ../web
 npm run check       # svelte-check
@@ -130,12 +138,16 @@ The library's browser tests need a Chromium binary once: `npx playwright install
 cd recipe-finder-ui
 npm login                       # required once; publishing always needs an authenticated session
 npm version patch|minor|major   # semver bump
-npm publish                     # prepublishOnly rebuilds dist automatically
+npm publish                     # prepublishOnly rebuilds dist and runs the smoke check
 ```
 
+`prepublishOnly` runs `npm run build && npm run smoke`. The smoke check packs the tarball,
+installs it into a temporary project and resolves every declared entry point through both
+`import` and `require`, so a broken `exports` map fails the release instead of the consumer.
+
 `package.json` already sets `publishConfig.access = "public"`, a curated `files` list and an
-`exports` map (`.`, `./components`, `./loader`), so the published tarball contains only build
-output and type declarations.
+`exports` map (`.`, `./components`, `./loader`, `./theme.css`), so the published tarball contains
+only build output and type declarations.
 
 After the first publish, point the app at the registry version instead of the local folder:
 
@@ -165,11 +177,18 @@ resolves `recipe-finder-ui` from the local workspace or from npm.
   performed by intersecting two filter calls client-side, and it exposes no ratings or servings —
   `rf-rating` is therefore driven by user-supplied values on user recipes only.
 - **Rate limiting.** The public API throttles bursts of requests, so `web/src/lib/api/mealdb.ts`
-  memoises in-flight and completed requests for the session. Random-recipe lookups deliberately
-  bypass the cache.
+  memoises in-flight and completed requests for the session, capped at 50 entries with LRU
+  eviction. Random-recipe lookups deliberately bypass the cache. `filter.php` omits category and
+  area, so those values are backfilled from the active filter before the summary is stored.
 - **Persistence.** There is no backend. User recipes, favourites and meal plans live in
   `localStorage` under the `rf:` key prefix and are therefore per-browser. Clearing site data
-  resets the app.
+  resets the app. Stored values are shape-validated on read and namespaced by a schema version, so
+  corrupt or outdated data is discarded rather than crashing the app, and a failed write (quota
+  exceeded, private browsing) surfaces a banner instead of silently losing data. Changes made in
+  one tab are picked up by others through the `storage` event.
+- **Denormalised snapshots.** Favourites and planner slots store a copy of the recipe summary so
+  they render without a network call; creating, editing and deleting a user recipe cascades into
+  both.
 - **Rendering mode.** `web/src/routes/+layout.ts` sets `ssr = false`. The app is entirely
   localStorage-driven and renders custom elements, so client-side rendering avoids hydration
   mismatches and unresolved-element flashes.

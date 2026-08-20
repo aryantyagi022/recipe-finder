@@ -79,16 +79,22 @@
 		}
 	}
 
+	let requestId = 0;
+
 	async function load(params: { term: string; category: string; area: string }) {
+		const current = ++requestId;
 		loading = true;
 		error = '';
 		try {
-			results = await discover(params);
+			const found = await discover(params);
+			if (current !== requestId) return;
+			results = found;
 		} catch {
+			if (current !== requestId) return;
 			results = [];
 			error = 'We could not reach the recipe service. Please try again.';
 		} finally {
-			loading = false;
+			if (current === requestId) loading = false;
 		}
 	}
 
@@ -160,11 +166,11 @@
 	</div>
 
 	{#if error}
-		<p class="alert">{error}</p>
+		<p class="alert" role="alert">{error}</p>
 	{/if}
 
 	{#if loading}
-		<div class="spinner"></div>
+		<div class="spinner" role="status"><span class="sr-only">Loading recipes…</span></div>
 	{:else if combined.length === 0}
 		<rf-empty-state
 			use:bindProps={{

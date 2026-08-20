@@ -1,19 +1,19 @@
 :host {
   display: block;
-  font-family: var(--rf-font-family);
+  font-family: var(--rf-font-family, 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif);
 }
 
 .wrapper {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-end;
-  gap: var(--rf-space-md);
+  gap: var(--rf-space-md, 16px);
 }
 
 .group {
   display: flex;
   flex-direction: column;
-  gap: var(--rf-space-xs);
+  gap: var(--rf-space-xs, 4px);
   min-width: 170px;
 }
 
@@ -21,44 +21,44 @@
   font-size: 0.78rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--rf-color-text-muted);
+  color: var(--rf-color-text-muted, #5d6b7a);
 }
 
 select {
   font: inherit;
-  color: var(--rf-color-text);
-  background: var(--rf-color-surface);
-  border: 1px solid var(--rf-color-border);
-  border-radius: var(--rf-radius-md);
+  color: var(--rf-color-text, #1c2430);
+  background: var(--rf-color-surface, #ffffff);
+  border: 1px solid var(--rf-color-border, #e2e5ea);
+  border-radius: var(--rf-radius-md, 12px);
   padding: 0.6rem 0.75rem;
   cursor: pointer;
   outline: none;
 }
 
 select:focus {
-  border-color: var(--rf-color-accent);
-  box-shadow: 0 0 0 3px var(--rf-color-accent-soft);
+  border-color: var(--rf-color-accent, #e8590c);
+  box-shadow: 0 0 0 3px var(--rf-color-accent-soft, #fff1e8);
 }
 
 .extra {
   display: flex;
   align-items: center;
-  gap: var(--rf-space-sm);
+  gap: var(--rf-space-sm, 8px);
   margin-left: auto;
 }
 
 .reset {
   font: inherit;
   font-size: 0.85rem;
-  border: 1px solid var(--rf-color-border);
-  background: var(--rf-color-surface-muted);
-  color: var(--rf-color-text-muted);
-  border-radius: var(--rf-radius-md);
+  border: 1px solid var(--rf-color-border, #e2e5ea);
+  background: var(--rf-color-surface-muted, #f4f5f7);
+  color: var(--rf-color-text-muted, #5d6b7a);
+  border-radius: var(--rf-radius-md, 12px);
   padding: 0.55rem 0.9rem;
   cursor: pointer;
 }
 
 .reset:hover {
-  color: var(--rf-color-accent);
-  border-color: var(--rf-color-accent);
+  color: var(--rf-color-accent, #e8590c);
+  border-color: var(--rf-color-accent, #e8590c);
 }

@@ -3,6 +3,7 @@ import { favorites } from '$lib/state/favorites.svelte';
 import { planner } from '$lib/state/planner.svelte';
 import { userRecipes } from '$lib/state/recipes.svelte';
 import type { RecipeSummary } from '$lib/types';
+import { shiftWeek } from '$lib/utils/date';
 
 const pasta: RecipeSummary = {
 	id: '1',
@@ -135,5 +136,61 @@ describe('planner store', () => {
 
 		planner.goToCurrentWeek();
 		expect(planner.weekKey).toBe(start);
+	});
+});
+
+describe('snapshot cascades', () => {
+	it('refreshes the favorites snapshot when a recipe is edited', () => {
+		favorites.clear();
+		favorites.toggle(pasta);
+
+		favorites.updateSnapshot({ ...pasta, title: 'Pasta Deluxe', image: 'https://example.test/new.jpg' });
+
+		expect(favorites.items[0].title).toBe('Pasta Deluxe');
+		expect(favorites.items[0].image).toBe('https://example.test/new.jpg');
+	});
+
+	it('leaves recipes that are not favorited untouched', () => {
+		favorites.clear();
+		favorites.toggle(pasta);
+
+		favorites.updateSnapshot({ ...curry, title: 'Curry Deluxe' });
+
+		expect(favorites.items).toHaveLength(1);
+		expect(favorites.items[0].title).toBe('Pasta');
+	});
+
+	it('refreshes planned meals in every week when a recipe is edited', () => {
+		planner.clearWeek();
+		planner.goToCurrentWeek();
+		const thisWeek = planner.weekKey;
+		planner.assign(0, 'lunch', pasta);
+		planner.goToWeek(1);
+		const nextWeek = planner.weekKey;
+		planner.assign(3, 'dinner', pasta);
+
+		planner.updateRecipeEverywhere({ ...pasta, title: 'Pasta Deluxe' });
+
+		expect(planner.mealIn(thisWeek, 0, 'lunch')?.title).toBe('Pasta Deluxe');
+		expect(planner.mealIn(nextWeek, 3, 'dinner')?.title).toBe('Pasta Deluxe');
+
+		planner.clearWeek();
+		planner.goToCurrentWeek();
+		planner.clearWeek();
+	});
+});
+
+describe('assignTo', () => {
+	it('writes into an explicit week without moving the selected week', () => {
+		planner.goToCurrentWeek();
+		planner.clearWeek();
+		const selected = planner.weekKey;
+		const target = shiftWeek(selected, 2);
+
+		planner.assignTo(target, 4, 'breakfast', curry);
+
+		expect(planner.weekKey).toBe(selected);
+		expect(planner.plannedCount).toBe(0);
+		expect(planner.mealIn(target, 4, 'breakfast')?.title).toBe('Curry');
 	});
 });

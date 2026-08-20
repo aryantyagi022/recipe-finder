@@ -1,17 +1,27 @@
 import { Component, Event, EventEmitter, Prop, h } from '@stencil/core';
 import type { FilterGroup } from '../../types';
 
+/**
+ * A row of controlled dropdown filters with an optional reset button.
+ *
+ * @slot - Extra controls rendered alongside the reset button.
+ */
 @Component({
   tag: 'rf-filter-bar',
   styleUrl: 'rf-filter-bar.css',
   shadow: true,
 })
 export class RfFilterBar {
+  /** The filter groups to render. Must be set as a DOM property, not an attribute. */
   @Prop() groups: FilterGroup[] = [];
+  /** The active value per group id. The component is fully controlled by this map. */
   @Prop() selected: Record<string, string> = {};
+  /** Whether to show the reset button once at least one filter is active. */
   @Prop() resettable = true;
 
+  /** Emitted when a group changes, with the group id and the newly selected value (`''` means "All"). */
   @Event({ eventName: 'rfFilterChange' }) rfFilterChange: EventEmitter<{ group: string; value: string }>;
+  /** Emitted when the reset button is pressed. The consumer is responsible for clearing `selected`. */
   @Event({ eventName: 'rfFilterReset' }) rfFilterReset: EventEmitter<void>;
 
   private get parsedGroups(): FilterGroup[] {

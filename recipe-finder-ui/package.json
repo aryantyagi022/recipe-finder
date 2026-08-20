@@ -11,6 +11,18 @@
     "meal-planner",
     "svelte"
   ],
+  "homepage": "https://github.com/Blackbaud-AryanTyagi/recipe-finder#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Blackbaud-AryanTyagi/recipe-finder.git",
+    "directory": "recipe-finder-ui"
+  },
+  "bugs": {
+    "url": "https://github.com/Blackbaud-AryanTyagi/recipe-finder/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "main": "dist/index.cjs.js",
   "module": "dist/index.js",
   "types": "dist/types/index.d.ts",
@@ -20,9 +32,10 @@
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/recipe-finder-ui/recipe-finder-ui.esm.js",
-      "require": "./dist/recipe-finder-ui/recipe-finder-ui.cjs.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs.js"
     },
+    "./dist/recipe-finder-ui/recipe-finder-ui.esm.js": "./dist/recipe-finder-ui/recipe-finder-ui.esm.js",
     "./components": {
       "types": "./dist/components/index.d.ts",
       "import": "./dist/components/index.js"
@@ -37,6 +50,7 @@
       "require": "./loader/index.cjs.js"
     },
     "./dist/recipe-finder-ui/recipe-finder-ui.css": "./dist/recipe-finder-ui/recipe-finder-ui.css",
+    "./theme.css": "./dist/recipe-finder-ui/recipe-finder-ui.css",
     "./package.json": "./package.json"
   },
   "files": [
@@ -55,7 +69,8 @@
     "test": "stencil-test --prod",
     "test:watch": "stencil-test --prod --watch",
     "generate": "stencil generate",
-    "prepublishOnly": "npm run build"
+    "smoke": "node scripts/smoke-package.mjs",
+    "prepublishOnly": "npm run build && npm run smoke"
   },
   "devDependencies": {
     "@stencil/core": "^4.27.1 || ^5.0.0-0",

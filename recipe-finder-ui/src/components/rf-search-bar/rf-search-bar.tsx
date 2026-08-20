@@ -1,5 +1,10 @@
 import { Component, Element, Event, EventEmitter, Prop, State, Watch, h } from '@stencil/core';
 
+/**
+ * A debounced search field with an optional clear button and a slot for adjacent actions.
+ *
+ * @slot actions - Buttons rendered inside the field, after the clear button.
+ */
 @Component({
   tag: 'rf-search-bar',
   styleUrl: 'rf-search-bar.css',
@@ -8,15 +13,22 @@ import { Component, Element, Event, EventEmitter, Prop, State, Watch, h } from '
 export class RfSearchBar {
   @Element() host: HTMLElement;
 
+  /** The current search term. Updating it from outside replaces whatever the user has typed. */
   @Prop() value = '';
+  /** Placeholder shown while the field is empty. */
   @Prop() placeholder = 'Search recipes';
+  /** Visible label for the field. When empty, no label element is rendered. */
   @Prop() label = '';
+  /** Milliseconds to wait after the last keystroke before emitting `rfSearch`. */
   @Prop() debounce = 350;
+  /** Disables the input, for example while results are loading. */
   @Prop() disabled = false;
 
   @State() draft = '';
 
+  /** Emitted with the trimmed search term after the debounce elapses, or immediately on submit. */
   @Event({ eventName: 'rfSearch' }) rfSearch: EventEmitter<string>;
+  /** Emitted when the clear button is pressed, just before an empty `rfSearch`. */
   @Event({ eventName: 'rfClear' }) rfClear: EventEmitter<void>;
 
   private timer: ReturnType<typeof setTimeout>;

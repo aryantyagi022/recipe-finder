@@ -1,5 +1,5 @@
 :host {
-  font-family: var(--rf-font-family);
+  font-family: var(--rf-font-family, 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif);
 }
 
 .backdrop {
@@ -10,7 +10,7 @@
   backdrop-filter: blur(2px);
   display: grid;
   place-items: center;
-  padding: var(--rf-space-md);
+  padding: var(--rf-space-md, 16px);
   outline: none;
 }
 
@@ -19,9 +19,9 @@
   max-height: 88vh;
   display: flex;
   flex-direction: column;
-  background: var(--rf-color-surface);
-  border-radius: var(--rf-radius-lg);
-  box-shadow: var(--rf-shadow-md);
+  background: var(--rf-color-surface, #ffffff);
+  border-radius: var(--rf-radius-lg, 18px);
+  box-shadow: var(--rf-shadow-md, 0 10px 30px rgba(24, 34, 48, 0.12));
   animation: rise 0.16s ease-out;
 }
 
@@ -41,21 +41,21 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--rf-space-md);
-  padding: var(--rf-space-md) var(--rf-space-lg);
-  border-bottom: 1px solid var(--rf-color-border);
+  gap: var(--rf-space-md, 16px);
+  padding: var(--rf-space-md, 16px) var(--rf-space-lg, 24px);
+  border-bottom: 1px solid var(--rf-color-border, #e2e5ea);
 }
 
 header h2 {
   margin: 0;
   font-size: 1.1rem;
-  color: var(--rf-color-text);
+  color: var(--rf-color-text, #1c2430);
 }
 
 .close {
   border: none;
-  background: var(--rf-color-surface-muted);
-  color: var(--rf-color-text-muted);
+  background: var(--rf-color-surface-muted, #f4f5f7);
+  color: var(--rf-color-text-muted, #5d6b7a);
   width: 30px;
   height: 30px;
   border-radius: 50%;
@@ -65,21 +65,21 @@ header h2 {
 }
 
 .close:hover {
-  color: var(--rf-color-text);
+  color: var(--rf-color-text, #1c2430);
 }
 
 .content {
-  padding: var(--rf-space-lg);
+  padding: var(--rf-space-lg, 24px);
   overflow-y: auto;
-  color: var(--rf-color-text);
+  color: var(--rf-color-text, #1c2430);
 }
 
 footer {
-  padding: var(--rf-space-md) var(--rf-space-lg);
-  border-top: 1px solid var(--rf-color-border);
+  padding: var(--rf-space-md, 16px) var(--rf-space-lg, 24px);
+  border-top: 1px solid var(--rf-color-border, #e2e5ea);
   display: flex;
   justify-content: flex-end;
-  gap: var(--rf-space-sm);
+  gap: var(--rf-space-sm, 8px);
 }
 
 footer:not(:has(*)) {

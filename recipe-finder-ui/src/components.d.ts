@@ -8,120 +8,174 @@ import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 import { FilterGroup, RecipeCardData, TagTone } from "./types";
 export { FilterGroup, RecipeCardData, TagTone } from "./types";
 export namespace Components {
+    /**
+     * A placeholder shown when a list or search has no results.
+     */
     interface RfEmptyState {
         /**
+          * The primary message.
           * @default 'Nothing here yet'
          */
         "heading": string;
         /**
+          * Decorative emoji or glyph shown above the heading.
           * @default '🍲'
          */
         "icon": string;
         /**
+          * Optional supporting text shown below the heading.
           * @default ''
          */
         "message": string;
     }
+    /**
+     * A row of controlled dropdown filters with an optional reset button.
+     */
     interface RfFilterBar {
         /**
+          * The filter groups to render. Must be set as a DOM property, not an attribute.
           * @default []
          */
         "groups": FilterGroup[];
         /**
+          * Whether to show the reset button once at least one filter is active.
           * @default true
          */
         "resettable": boolean;
         /**
+          * The active value per group id. The component is fully controlled by this map.
           * @default {}
          */
         "selected": Record<string, string>;
     }
+    /**
+     * An accessible dialog that traps focus, closes on Escape and restores focus on close.
+     */
     interface RfModal {
         /**
+          * Whether Escape, the backdrop and the close button can dismiss the dialog.
           * @default true
          */
         "dismissible": boolean;
         /**
+          * The dialog title, also used as its accessible name.
           * @default ''
          */
         "heading": string;
         /**
+          * Whether the dialog is visible. Nothing is rendered while it is false.
           * @default false
          */
         "open": boolean;
         /**
+          * Dialog width preset.
           * @default 'md'
          */
         "size": 'sm' | 'md' | 'lg';
     }
+    /**
+     * A star rating control that can be interactive or read-only.
+     */
     interface RfRating {
         /**
+          * Accessible name for the rating group.
           * @default 'Rating'
          */
         "label": string;
         /**
+          * How many stars to render.
           * @default 5
          */
         "max": number;
         /**
+          * Renders the rating as a non-interactive display.
           * @default false
          */
         "readonly": boolean;
         /**
+          * The current score, from 0 to `max`.
           * @default 0
          */
         "value": number;
     }
+    /**
+     * A recipe summary card with an image, metadata, tags and a favourite toggle.
+     */
     interface RfRecipeCard {
         /**
+          * Optional label overlaid on the image, for example "My recipe".
           * @default ''
          */
         "badge": string;
         /**
+          * Renders a denser card for sidebars and pickers.
           * @default false
          */
         "compact": boolean;
         /**
+          * Whether the recipe is currently favourited, which drives the heart button's state.
           * @default false
          */
         "favorite": boolean;
+        /**
+          * The recipe to render. Must be set as a DOM property, not an attribute. Nothing renders until it is set.
+         */
         "recipe": RecipeCardData;
     }
+    /**
+     * A debounced search field with an optional clear button and a slot for adjacent actions.
+     */
     interface RfSearchBar {
         /**
+          * Milliseconds to wait after the last keystroke before emitting `rfSearch`.
           * @default 350
          */
         "debounce": number;
         /**
+          * Disables the input, for example while results are loading.
           * @default false
          */
         "disabled": boolean;
         /**
+          * Visible label for the field. When empty, no label element is rendered.
           * @default ''
          */
         "label": string;
         /**
+          * Placeholder shown while the field is empty.
           * @default 'Search recipes'
          */
         "placeholder": string;
         /**
+          * The current search term. Updating it from outside replaces whatever the user has typed.
           * @default ''
          */
         "value": string;
     }
+    /**
+     * A small pill for categories, cuisines and keywords, optionally removable.
+     */
     interface RfTag {
         /**
+          * Text shown when nothing is slotted, and the basis of the remove button's accessible name.
           * @default ''
          */
         "label": string;
         /**
+          * Whether to render a remove button.
           * @default false
          */
         "removable": boolean;
         /**
+          * Colour variant.
           * @default 'neutral'
          */
         "tone": TagTone;
+        /**
+          * Payload emitted by `rfRemove`. Defaults to the label or the slotted text.
+          * @default ''
+         */
+        "value": string;
     }
 }
 export interface RfFilterBarCustomEvent<T> extends CustomEvent<T> {
@@ -149,6 +203,9 @@ export interface RfTagCustomEvent<T> extends CustomEvent<T> {
     target: HTMLRfTagElement;
 }
 declare global {
+    /**
+     * A placeholder shown when a list or search has no results.
+     */
     interface HTMLRfEmptyStateElement extends Components.RfEmptyState, HTMLStencilElement {
     }
     var HTMLRfEmptyStateElement: {
@@ -159,6 +216,9 @@ declare global {
         "rfFilterChange": { group: string; value: string };
         "rfFilterReset": void;
     }
+    /**
+     * A row of controlled dropdown filters with an optional reset button.
+     */
     interface HTMLRfFilterBarElement extends Components.RfFilterBar, HTMLStencilElement {
         addEventListener<K extends keyof HTMLRfFilterBarElementEventMap>(type: K, listener: (this: HTMLRfFilterBarElement, ev: RfFilterBarCustomEvent<HTMLRfFilterBarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -176,6 +236,9 @@ declare global {
     interface HTMLRfModalElementEventMap {
         "rfClose": void;
     }
+    /**
+     * An accessible dialog that traps focus, closes on Escape and restores focus on close.
+     */
     interface HTMLRfModalElement extends Components.RfModal, HTMLStencilElement {
         addEventListener<K extends keyof HTMLRfModalElementEventMap>(type: K, listener: (this: HTMLRfModalElement, ev: RfModalCustomEvent<HTMLRfModalElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -193,6 +256,9 @@ declare global {
     interface HTMLRfRatingElementEventMap {
         "rfRate": number;
     }
+    /**
+     * A star rating control that can be interactive or read-only.
+     */
     interface HTMLRfRatingElement extends Components.RfRating, HTMLStencilElement {
         addEventListener<K extends keyof HTMLRfRatingElementEventMap>(type: K, listener: (this: HTMLRfRatingElement, ev: RfRatingCustomEvent<HTMLRfRatingElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -211,6 +277,9 @@ declare global {
         "rfSelect": RecipeCardData;
         "rfFavoriteToggle": { recipe: RecipeCardData; favorite: boolean };
     }
+    /**
+     * A recipe summary card with an image, metadata, tags and a favourite toggle.
+     */
     interface HTMLRfRecipeCardElement extends Components.RfRecipeCard, HTMLStencilElement {
         addEventListener<K extends keyof HTMLRfRecipeCardElementEventMap>(type: K, listener: (this: HTMLRfRecipeCardElement, ev: RfRecipeCardCustomEvent<HTMLRfRecipeCardElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -229,6 +298,9 @@ declare global {
         "rfSearch": string;
         "rfClear": void;
     }
+    /**
+     * A debounced search field with an optional clear button and a slot for adjacent actions.
+     */
     interface HTMLRfSearchBarElement extends Components.RfSearchBar, HTMLStencilElement {
         addEventListener<K extends keyof HTMLRfSearchBarElementEventMap>(type: K, listener: (this: HTMLRfSearchBarElement, ev: RfSearchBarCustomEvent<HTMLRfSearchBarElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -246,6 +318,9 @@ declare global {
     interface HTMLRfTagElementEventMap {
         "rfRemove": string;
     }
+    /**
+     * A small pill for categories, cuisines and keywords, optionally removable.
+     */
     interface HTMLRfTagElement extends Components.RfTag, HTMLStencilElement {
         addEventListener<K extends keyof HTMLRfTagElementEventMap>(type: K, listener: (this: HTMLRfTagElement, ev: RfTagCustomEvent<HTMLRfTagElementEventMap[K]>) => any, options?: boolean | AddEventListenerOptions): void;
         addEventListener<K extends keyof DocumentEventMap>(type: K, listener: (this: Document, ev: DocumentEventMap[K]) => any, options?: boolean | AddEventListenerOptions): void;
@@ -271,129 +346,210 @@ declare global {
     }
 }
 declare namespace LocalJSX {
+    /**
+     * A placeholder shown when a list or search has no results.
+     */
     interface RfEmptyState {
         /**
+          * The primary message.
           * @default 'Nothing here yet'
          */
         "heading"?: string;
         /**
+          * Decorative emoji or glyph shown above the heading.
           * @default '🍲'
          */
         "icon"?: string;
         /**
+          * Optional supporting text shown below the heading.
           * @default ''
          */
         "message"?: string;
     }
+    /**
+     * A row of controlled dropdown filters with an optional reset button.
+     */
     interface RfFilterBar {
         /**
+          * The filter groups to render. Must be set as a DOM property, not an attribute.
           * @default []
          */
         "groups"?: FilterGroup[];
+        /**
+          * Emitted when a group changes, with the group id and the newly selected value (`''` means "All").
+         */
         "onRfFilterChange"?: (event: RfFilterBarCustomEvent<{ group: string; value: string }>) => void;
+        /**
+          * Emitted when the reset button is pressed. The consumer is responsible for clearing `selected`.
+         */
         "onRfFilterReset"?: (event: RfFilterBarCustomEvent<void>) => void;
         /**
+          * Whether to show the reset button once at least one filter is active.
           * @default true
          */
         "resettable"?: boolean;
         /**
+          * The active value per group id. The component is fully controlled by this map.
           * @default {}
          */
         "selected"?: Record<string, string>;
     }
+    /**
+     * An accessible dialog that traps focus, closes on Escape and restores focus on close.
+     */
     interface RfModal {
         /**
+          * Whether Escape, the backdrop and the close button can dismiss the dialog.
           * @default true
          */
         "dismissible"?: boolean;
         /**
+          * The dialog title, also used as its accessible name.
           * @default ''
          */
         "heading"?: string;
+        /**
+          * Emitted when the user asks to dismiss the dialog. The consumer must set `open` to false.
+         */
         "onRfClose"?: (event: RfModalCustomEvent<void>) => void;
         /**
+          * Whether the dialog is visible. Nothing is rendered while it is false.
           * @default false
          */
         "open"?: boolean;
         /**
+          * Dialog width preset.
           * @default 'md'
          */
         "size"?: 'sm' | 'md' | 'lg';
     }
+    /**
+     * A star rating control that can be interactive or read-only.
+     */
     interface RfRating {
         /**
+          * Accessible name for the rating group.
           * @default 'Rating'
          */
         "label"?: string;
         /**
+          * How many stars to render.
           * @default 5
          */
         "max"?: number;
+        /**
+          * Emitted with the chosen score. Selecting the current score again emits `0` to clear it.
+         */
         "onRfRate"?: (event: RfRatingCustomEvent<number>) => void;
         /**
+          * Renders the rating as a non-interactive display.
           * @default false
          */
         "readonly"?: boolean;
         /**
+          * The current score, from 0 to `max`.
           * @default 0
          */
         "value"?: number;
     }
+    /**
+     * A recipe summary card with an image, metadata, tags and a favourite toggle.
+     */
     interface RfRecipeCard {
         /**
+          * Optional label overlaid on the image, for example "My recipe".
           * @default ''
          */
         "badge"?: string;
         /**
+          * Renders a denser card for sidebars and pickers.
           * @default false
          */
         "compact"?: boolean;
         /**
+          * Whether the recipe is currently favourited, which drives the heart button's state.
           * @default false
          */
         "favorite"?: boolean;
+        /**
+          * Emitted with the recipe and the requested state when the favourite button is activated.
+         */
         "onRfFavoriteToggle"?: (event: RfRecipeCardCustomEvent<{ recipe: RecipeCardData; favorite: boolean }>) => void;
+        /**
+          * Emitted with the recipe when the card or its title is activated.
+         */
         "onRfSelect"?: (event: RfRecipeCardCustomEvent<RecipeCardData>) => void;
+        /**
+          * The recipe to render. Must be set as a DOM property, not an attribute. Nothing renders until it is set.
+         */
         "recipe"?: RecipeCardData;
     }
+    /**
+     * A debounced search field with an optional clear button and a slot for adjacent actions.
+     */
     interface RfSearchBar {
         /**
+          * Milliseconds to wait after the last keystroke before emitting `rfSearch`.
           * @default 350
          */
         "debounce"?: number;
         /**
+          * Disables the input, for example while results are loading.
           * @default false
          */
         "disabled"?: boolean;
         /**
+          * Visible label for the field. When empty, no label element is rendered.
           * @default ''
          */
         "label"?: string;
+        /**
+          * Emitted when the clear button is pressed, just before an empty `rfSearch`.
+         */
         "onRfClear"?: (event: RfSearchBarCustomEvent<void>) => void;
+        /**
+          * Emitted with the trimmed search term after the debounce elapses, or immediately on submit.
+         */
         "onRfSearch"?: (event: RfSearchBarCustomEvent<string>) => void;
         /**
+          * Placeholder shown while the field is empty.
           * @default 'Search recipes'
          */
         "placeholder"?: string;
         /**
+          * The current search term. Updating it from outside replaces whatever the user has typed.
           * @default ''
          */
         "value"?: string;
     }
+    /**
+     * A small pill for categories, cuisines and keywords, optionally removable.
+     */
     interface RfTag {
         /**
+          * Text shown when nothing is slotted, and the basis of the remove button's accessible name.
           * @default ''
          */
         "label"?: string;
+        /**
+          * Emitted with `value` when the remove button is pressed.
+         */
         "onRfRemove"?: (event: RfTagCustomEvent<string>) => void;
         /**
+          * Whether to render a remove button.
           * @default false
          */
         "removable"?: boolean;
         /**
+          * Colour variant.
           * @default 'neutral'
          */
         "tone"?: TagTone;
+        /**
+          * Payload emitted by `rfRemove`. Defaults to the label or the slotted text.
+          * @default ''
+         */
+        "value"?: string;
     }
 
     interface RfEmptyStateAttributes {
@@ -430,6 +586,7 @@ declare namespace LocalJSX {
     }
     interface RfTagAttributes {
         "label": string;
+        "value": string;
         "tone": TagTone;
         "removable": boolean;
     }
@@ -448,12 +605,33 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            /**
+             * A placeholder shown when a list or search has no results.
+             */
             "rf-empty-state": LocalJSX.IntrinsicElements["rf-empty-state"] & JSXBase.HTMLAttributes<HTMLRfEmptyStateElement>;
+            /**
+             * A row of controlled dropdown filters with an optional reset button.
+             */
             "rf-filter-bar": LocalJSX.IntrinsicElements["rf-filter-bar"] & JSXBase.HTMLAttributes<HTMLRfFilterBarElement>;
+            /**
+             * An accessible dialog that traps focus, closes on Escape and restores focus on close.
+             */
             "rf-modal": LocalJSX.IntrinsicElements["rf-modal"] & JSXBase.HTMLAttributes<HTMLRfModalElement>;
+            /**
+             * A star rating control that can be interactive or read-only.
+             */
             "rf-rating": LocalJSX.IntrinsicElements["rf-rating"] & JSXBase.HTMLAttributes<HTMLRfRatingElement>;
+            /**
+             * A recipe summary card with an image, metadata, tags and a favourite toggle.
+             */
             "rf-recipe-card": LocalJSX.IntrinsicElements["rf-recipe-card"] & JSXBase.HTMLAttributes<HTMLRfRecipeCardElement>;
+            /**
+             * A debounced search field with an optional clear button and a slot for adjacent actions.
+             */
             "rf-search-bar": LocalJSX.IntrinsicElements["rf-search-bar"] & JSXBase.HTMLAttributes<HTMLRfSearchBarElement>;
+            /**
+             * A small pill for categories, cuisines and keywords, optionally removable.
+             */
             "rf-tag": LocalJSX.IntrinsicElements["rf-tag"] & JSXBase.HTMLAttributes<HTMLRfTagElement>;
         }
     }

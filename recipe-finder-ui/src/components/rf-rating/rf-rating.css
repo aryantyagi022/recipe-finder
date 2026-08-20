@@ -1,6 +1,6 @@
 :host {
   display: inline-block;
-  font-family: var(--rf-font-family);
+  font-family: var(--rf-font-family, 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif);
 }
 
 .rating {
@@ -14,13 +14,13 @@
   padding: 0;
   font-size: 1.15rem;
   line-height: 1;
-  color: var(--rf-color-border);
+  color: var(--rf-color-border, #e2e5ea);
   cursor: pointer;
   transition: color 0.12s ease, transform 0.12s ease;
 }
 
 .star.filled {
-  color: var(--rf-color-warning);
+  color: var(--rf-color-warning, #d99400);
 }
 
 .rating:not(.readonly) .star:hover {

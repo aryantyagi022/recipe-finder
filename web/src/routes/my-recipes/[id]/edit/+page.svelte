@@ -3,6 +3,8 @@
 	import { page } from '$app/state';
 	import { bindProps } from '$lib/actions/bindProps';
 	import RecipeForm from '$lib/components/RecipeForm.svelte';
+	import { favorites } from '$lib/state/favorites.svelte';
+	import { planner } from '$lib/state/planner.svelte';
 	import { userRecipes } from '$lib/state/recipes.svelte';
 	import { draftToRecipe } from '$lib/utils/draft';
 	import type { RecipeDraft } from '$lib/validation/recipe';
@@ -11,7 +13,20 @@
 
 	function save(draft: RecipeDraft) {
 		if (!recipe) return;
-		userRecipes.update(recipe.id, draftToRecipe(draft));
+		const updated = userRecipes.update(recipe.id, draftToRecipe(draft));
+		if (updated) {
+			const summary = {
+				id: updated.id,
+				title: updated.title,
+				image: updated.image,
+				category: updated.category,
+				area: updated.area,
+				origin: updated.origin,
+				tags: updated.tags
+			};
+			favorites.updateSnapshot(summary);
+			planner.updateRecipeEverywhere(summary);
+		}
 		void goto(`/recipes/${recipe.id}`);
 	}
 </script>

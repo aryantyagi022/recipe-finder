@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import favicon from '$lib/assets/favicon.svg';
 	import SiteHeader from '$lib/components/SiteHeader.svelte';
+	import { storageError } from '$lib/state/storage.svelte';
 	import '../app.css';
 
 	let { children } = $props();
@@ -19,6 +20,10 @@
 
 <SiteHeader />
 
+{#if storageError.message}
+	<p class="storage-error" role="alert">{storageError.message}</p>
+{/if}
+
 <main>
 	{@render children()}
 </main>
@@ -34,6 +39,16 @@
 </footer>
 
 <style>
+	.storage-error {
+		margin: 0;
+		padding: var(--rf-space-sm) var(--rf-space-md);
+		background: #fdecec;
+		border-bottom: 1px solid var(--rf-color-danger);
+		color: #8c2b2b;
+		font-size: 0.88rem;
+		text-align: center;
+	}
+
 	main {
 		min-height: calc(100vh - 66px - 72px);
 	}

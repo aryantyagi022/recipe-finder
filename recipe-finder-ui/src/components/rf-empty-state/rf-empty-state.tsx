@@ -1,13 +1,21 @@
 import { Component, Prop, h } from '@stencil/core';
 
+/**
+ * A placeholder shown when a list or search has no results.
+ *
+ * @slot - Call-to-action content rendered below the message.
+ */
 @Component({
   tag: 'rf-empty-state',
   styleUrl: 'rf-empty-state.css',
   shadow: true,
 })
 export class RfEmptyState {
+  /** Decorative emoji or glyph shown above the heading. */
   @Prop() icon = '🍲';
+  /** The primary message. */
   @Prop() heading = 'Nothing here yet';
+  /** Optional supporting text shown below the heading. */
   @Prop() message = '';
 
   render() {

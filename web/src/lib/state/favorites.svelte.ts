@@ -1,13 +1,21 @@
 import type { RecipeSummary } from '$lib/types';
-import { readStorage, writeStorage } from './storage';
+import { isArrayOf, onExternalChange, readStorage, writeStorage } from './storage.svelte';
 
 const STORAGE_KEY = 'rf:favorites';
+
+const isSummary = (value: unknown) =>
+	typeof value === 'object' && value !== null && typeof (value as RecipeSummary).id === 'string';
 
 class FavoritesStore {
 	items = $state<RecipeSummary[]>([]);
 
 	constructor() {
-		this.items = readStorage<RecipeSummary[]>(STORAGE_KEY, []);
+		this.items = this.load();
+		onExternalChange(STORAGE_KEY, () => (this.items = this.load()));
+	}
+
+	private load() {
+		return readStorage(STORAGE_KEY, [] as RecipeSummary[], isArrayOf<RecipeSummary>(isSummary));
 	}
 
 	get count() {
@@ -27,6 +35,12 @@ class FavoritesStore {
 
 	remove(id: string) {
 		this.items = this.items.filter((item) => item.id !== id);
+		this.persist();
+	}
+
+	updateSnapshot(recipe: RecipeSummary) {
+		if (!this.has(recipe.id)) return;
+		this.items = this.items.map((item) => (item.id === recipe.id ? { ...item, ...recipe } : item));
 		this.persist();
 	}
 

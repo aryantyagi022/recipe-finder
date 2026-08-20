@@ -1,3 +1,4 @@
+import { userEvent } from 'vitest/browser';
 import { describe, expect, it, render } from '@stencil/vitest';
 import type { RecipeCardData } from '../../types';
 
@@ -73,5 +74,47 @@ describe('rf-recipe-card', () => {
     root.querySelector<HTMLElement>('#plan').click();
 
     expect(selected.length).toBe(0);
+  });
+
+  it('toggles the favorite with the keyboard instead of selecting the card', async () => {
+    const { root, spyOnEvent } = await render('<rf-recipe-card></rf-recipe-card>', {});
+    (root as any).recipe = recipe;
+    await settle(root, '.card');
+
+    const toggled = spyOnEvent('rfFavoriteToggle');
+    const selected = spyOnEvent('rfSelect');
+    root.shadowRoot.querySelector<HTMLElement>('.fav').focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(toggled.length).toBe(1);
+    expect(selected.length).toBe(0);
+  });
+
+  it('activates slotted footer content with the keyboard', async () => {
+    const { root, spyOnEvent } = await render('<rf-recipe-card><button slot="footer" id="plan">Add to plan</button></rf-recipe-card>', {});
+    (root as any).recipe = recipe;
+    await settle(root, '.card');
+
+    const selected = spyOnEvent('rfSelect');
+    let planClicks = 0;
+    root.querySelector('#plan').addEventListener('click', () => (planClicks += 1));
+    root.querySelector<HTMLElement>('#plan').focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(planClicks).toBe(1);
+    expect(selected.length).toBe(0);
+  });
+
+  it('selects the card when the title is activated with the keyboard', async () => {
+    const { root, spyOnEvent } = await render('<rf-recipe-card></rf-recipe-card>', {});
+    (root as any).recipe = recipe;
+    await settle(root, '.card');
+
+    const selected = spyOnEvent('rfSelect');
+    root.shadowRoot.querySelector<HTMLElement>('.title').focus();
+    await userEvent.keyboard('{Enter}');
+
+    expect(selected.length).toBe(1);
+    expect(selected.lastEvent.detail).toEqual(recipe);
   });
 });

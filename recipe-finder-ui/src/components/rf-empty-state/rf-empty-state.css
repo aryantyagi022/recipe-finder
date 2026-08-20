@@ -1,18 +1,18 @@
 :host {
   display: block;
-  font-family: var(--rf-font-family);
+  font-family: var(--rf-font-family, 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif);
 }
 
 .empty {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--rf-space-sm);
+  gap: var(--rf-space-sm, 8px);
   text-align: center;
-  padding: calc(var(--rf-space-lg) * 2) var(--rf-space-lg);
-  border: 1px dashed var(--rf-color-border);
-  border-radius: var(--rf-radius-lg);
-  background: var(--rf-color-surface);
+  padding: calc(var(--rf-space-lg, 24px) * 2) var(--rf-space-lg, 24px);
+  border: 1px dashed var(--rf-color-border, #e2e5ea);
+  border-radius: var(--rf-radius-lg, 18px);
+  background: var(--rf-color-surface, #ffffff);
 }
 
 .icon {
@@ -22,19 +22,19 @@
 h3 {
   margin: 0;
   font-size: 1.05rem;
-  color: var(--rf-color-text);
+  color: var(--rf-color-text, #1c2430);
 }
 
 p {
   margin: 0;
   max-width: 46ch;
-  color: var(--rf-color-text-muted);
+  color: var(--rf-color-text-muted, #5d6b7a);
   font-size: 0.9rem;
   line-height: 1.5;
 }
 
 .actions {
-  margin-top: var(--rf-space-sm);
+  margin-top: var(--rf-space-sm, 8px);
 }
 
 .actions:empty {

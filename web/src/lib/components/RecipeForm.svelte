@@ -58,8 +58,19 @@
 	);
 	let errors = $state<RecipeErrors>({});
 	let submitted = $state(false);
+	let form = $state<HTMLFormElement | null>(null);
 
 	const liveErrors = $derived(submitted ? validateRecipe(draft) : errors);
+	const errorCount = $derived(Object.values(liveErrors).filter(Boolean).length);
+
+	$effect(() => {
+		const source = initial;
+		untrack(() => {
+			draft = source ? fromRecipe(source) : emptyDraft();
+			errors = {};
+			submitted = false;
+		});
+	});
 
 	function addIngredient() {
 		draft.ingredients = [...draft.ingredients, { name: '', measure: '' }];
@@ -85,29 +96,37 @@
 		errors = validateRecipe(draft);
 		if (isValid(errors)) {
 			onsubmit(draft);
+			return;
 		}
+		queueMicrotask(() => form?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus());
 	}
 </script>
 
-<form class="panel" onsubmit={handleSubmit} novalidate>
+<form class="panel" bind:this={form} onsubmit={handleSubmit} novalidate>
+	<p class="sr-only" role="alert">
+		{#if submitted && errorCount > 0}
+			{errorCount} field{errorCount === 1 ? '' : 's'} need attention before this recipe can be saved.
+		{/if}
+	</p>
+
 	<section>
 		<h2>Basics</h2>
 		<div class="grid">
 			<div class="field" class:invalid={liveErrors.title}>
 				<label for="title">Title *</label>
-				<input id="title" bind:value={draft.title} placeholder="Creamy tomato pasta" />
-				{#if liveErrors.title}<span class="error">{liveErrors.title}</span>{/if}
+				<input id="title" aria-invalid={liveErrors.title ? "true" : undefined} aria-describedby={liveErrors.title ? "title-error" : undefined} bind:value={draft.title} placeholder="Creamy tomato pasta" />
+				{#if liveErrors.title}<span class="error" id="title-error">{liveErrors.title}</span>{/if}
 			</div>
 
 			<div class="field" class:invalid={liveErrors.category}>
 				<label for="category">Category *</label>
-				<select id="category" bind:value={draft.category}>
+				<select id="category" aria-invalid={liveErrors.category ? "true" : undefined} aria-describedby={liveErrors.category ? "category-error" : undefined} bind:value={draft.category}>
 					<option value="">Select a category</option>
 					{#each CATEGORIES as option (option)}
 						<option value={option}>{option}</option>
 					{/each}
 				</select>
-				{#if liveErrors.category}<span class="error">{liveErrors.category}</span>{/if}
+				{#if liveErrors.category}<span class="error" id="category-error">{liveErrors.category}</span>{/if}
 			</div>
 
 			<div class="field">
@@ -117,20 +136,20 @@
 
 			<div class="field" class:invalid={liveErrors.image}>
 				<label for="image">Image URL</label>
-				<input id="image" bind:value={draft.image} placeholder="https://…" />
-				{#if liveErrors.image}<span class="error">{liveErrors.image}</span>{/if}
+				<input id="image" aria-invalid={liveErrors.image ? "true" : undefined} aria-describedby={liveErrors.image ? "image-error" : undefined} bind:value={draft.image} placeholder="https://…" />
+				{#if liveErrors.image}<span class="error" id="image-error">{liveErrors.image}</span>{/if}
 			</div>
 
 			<div class="field" class:invalid={liveErrors.servings}>
 				<label for="servings">Servings *</label>
-				<input id="servings" type="number" min="1" max="50" bind:value={draft.servings} />
-				{#if liveErrors.servings}<span class="error">{liveErrors.servings}</span>{/if}
+				<input id="servings" aria-invalid={liveErrors.servings ? "true" : undefined} aria-describedby={liveErrors.servings ? "servings-error" : undefined} type="number" min="1" max="50" bind:value={draft.servings} />
+				{#if liveErrors.servings}<span class="error" id="servings-error">{liveErrors.servings}</span>{/if}
 			</div>
 
 			<div class="field" class:invalid={liveErrors.cookTime}>
 				<label for="cookTime">Cook time (minutes) *</label>
-				<input id="cookTime" type="number" min="1" max="1440" bind:value={draft.cookTime} />
-				{#if liveErrors.cookTime}<span class="error">{liveErrors.cookTime}</span>{/if}
+				<input id="cookTime" aria-invalid={liveErrors.cookTime ? "true" : undefined} aria-describedby={liveErrors.cookTime ? "cookTime-error" : undefined} type="number" min="1" max="1440" bind:value={draft.cookTime} />
+				{#if liveErrors.cookTime}<span class="error" id="cookTime-error">{liveErrors.cookTime}</span>{/if}
 			</div>
 
 			<div class="field">
@@ -140,8 +159,8 @@
 
 			<div class="field" class:invalid={liveErrors.youtube}>
 				<label for="youtube">Video link</label>
-				<input id="youtube" bind:value={draft.youtube} placeholder="https://youtube.com/…" />
-				{#if liveErrors.youtube}<span class="error">{liveErrors.youtube}</span>{/if}
+				<input id="youtube" aria-invalid={liveErrors.youtube ? "true" : undefined} aria-describedby={liveErrors.youtube ? "youtube-error" : undefined} bind:value={draft.youtube} placeholder="https://youtube.com/…" />
+				{#if liveErrors.youtube}<span class="error" id="youtube-error">{liveErrors.youtube}</span>{/if}
 			</div>
 		</div>
 
@@ -161,7 +180,7 @@
 		</div>
 
 		{#if liveErrors.ingredients}
-			<p class="error">{liveErrors.ingredients}</p>
+			<p class="error" role="alert">{liveErrors.ingredients}</p>
 		{/if}
 
 		<div class="rows">
@@ -197,7 +216,7 @@
 		</div>
 
 		{#if liveErrors.instructions}
-			<p class="error">{liveErrors.instructions}</p>
+			<p class="error" role="alert">{liveErrors.instructions}</p>
 		{/if}
 
 		<div class="rows">

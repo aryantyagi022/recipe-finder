@@ -1,5 +1,8 @@
 import type { Recipe } from '$lib/types';
-import { readStorage, writeStorage } from './storage';
+import { isArrayOf, onExternalChange, readStorage, writeStorage } from './storage.svelte';
+
+const isRecipe = (value: unknown) =>
+	typeof value === 'object' && value !== null && typeof (value as Recipe).id === 'string';
 
 const STORAGE_KEY = 'rf:user-recipes';
 
@@ -13,7 +16,12 @@ class UserRecipeStore {
 	items = $state<Recipe[]>([]);
 
 	constructor() {
-		this.items = readStorage<Recipe[]>(STORAGE_KEY, []);
+		this.items = this.load();
+		onExternalChange(STORAGE_KEY, () => (this.items = this.load()));
+	}
+
+	private load() {
+		return readStorage(STORAGE_KEY, [] as Recipe[], isArrayOf<Recipe>(isRecipe));
 	}
 
 	get count() {

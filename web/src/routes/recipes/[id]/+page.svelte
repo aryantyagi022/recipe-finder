@@ -9,7 +9,7 @@
 	import { planner } from '$lib/state/planner.svelte';
 	import { isUserRecipeId, userRecipes } from '$lib/state/recipes.svelte';
 	import type { Recipe, RecipeSummary } from '$lib/types';
-	import { WEEK_DAYS } from '$lib/utils/date';
+	import { WEEK_DAYS, formatWeekRange } from '$lib/utils/date';
 
 	let recipe = $state<Recipe | null>(null);
 	let loading = $state(true);
@@ -40,7 +40,10 @@
 		untrack(() => load(id));
 	});
 
+	let requestId = 0;
+
 	async function load(id: string) {
+		const current = ++requestId;
 		loading = true;
 		error = '';
 		recipe = null;
@@ -58,12 +61,15 @@
 		}
 
 		try {
-			recipe = await getRecipeById(id);
+			const found = await getRecipeById(id);
+			if (current !== requestId) return;
+			recipe = found;
 			if (!recipe) error = 'We could not find that recipe.';
 		} catch {
+			if (current !== requestId) return;
 			error = 'We could not reach the recipe service. Please try again.';
 		} finally {
-			loading = false;
+			if (current === requestId) loading = false;
 		}
 	}
 
@@ -79,7 +85,7 @@
 
 <div class="page">
 	{#if loading}
-		<div class="spinner"></div>
+		<div class="spinner" role="status"><span class="sr-only">Loading recipe…</span></div>
 	{:else if error || !recipe}
 		<rf-empty-state
 			use:bindProps={{ icon: '😕', heading: 'Recipe unavailable', message: error }}
@@ -167,7 +173,10 @@
 					{#if plannedIn.length > 0}
 						<p class="planned">
 							Planned for {plannedIn
-								.map((entry) => `${WEEK_DAYS[entry.dayIndex]} ${entry.slot}`)
+								.map(
+									(entry) =>
+										`${WEEK_DAYS[entry.dayIndex]} ${entry.slot} (${formatWeekRange(entry.weekKey)})`
+								)
 								.join(', ')}
 						</p>
 					{/if}

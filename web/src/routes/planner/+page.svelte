@@ -43,24 +43,30 @@
 
 	const suggestions = $derived(searchTerm ? searchResults : localRecipes.slice(0, 12));
 
+	let searchId = 0;
+
 	async function runSearch(event: CustomEvent<string>) {
 		searchTerm = event.detail;
+		const current = ++searchId;
 		if (!searchTerm) {
 			searchResults = [];
+			searching = false;
 			return;
 		}
 		searching = true;
 		try {
 			const apiResults = await searchRecipes(searchTerm);
+			if (current !== searchId) return;
 			const local = localRecipes.filter((recipe) =>
 				recipe.title.toLowerCase().includes(searchTerm.toLowerCase())
 			);
 			const seen = new Set(local.map((recipe) => recipe.id));
 			searchResults = [...local, ...apiResults.filter((recipe) => !seen.has(recipe.id))];
 		} catch {
+			if (current !== searchId) return;
 			searchResults = [];
 		} finally {
-			searching = false;
+			if (current === searchId) searching = false;
 		}
 	}
 
@@ -213,7 +219,7 @@
 	></rf-search-bar>
 
 	{#if searching}
-		<div class="spinner"></div>
+		<div class="spinner" role="status"><span class="sr-only">Searching recipes…</span></div>
 	{:else if suggestions.length === 0}
 		<p class="muted empty-note">
 			No matching recipes. Try another search term or add one of your own recipes first.
