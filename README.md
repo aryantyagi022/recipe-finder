@@ -8,7 +8,7 @@ package dependency.
 
 | Deliverable | URL |
 | --- | --- |
-| GitHub repository | _add after pushing_ |
+| GitHub repository | https://github.com/aryantyagi022/recipe-finder |
 | npm package | https://www.npmjs.com/package/recipe-finder-ui |
 | Deployed application | _add after the first Netlify deploy_ |
 

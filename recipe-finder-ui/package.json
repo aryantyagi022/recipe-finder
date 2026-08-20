@@ -2,6 +2,7 @@
   "name": "recipe-finder-ui",
   "version": "0.1.0",
   "description": "Reusable StencilJS web components for recipe discovery and meal planning UIs.",
+  "author": "aryantyagi022",
   "license": "MIT",
   "keywords": [
     "stencil",
@@ -11,14 +12,14 @@
     "meal-planner",
     "svelte"
   ],
-  "homepage": "https://github.com/Blackbaud-AryanTyagi/recipe-finder#readme",
+  "homepage": "https://github.com/aryantyagi022/recipe-finder#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Blackbaud-AryanTyagi/recipe-finder.git",
+    "url": "git+https://github.com/aryantyagi022/recipe-finder.git",
     "directory": "recipe-finder-ui"
   },
   "bugs": {
-    "url": "https://github.com/Blackbaud-AryanTyagi/recipe-finder/issues"
+    "url": "https://github.com/aryantyagi022/recipe-finder/issues"
   },
   "engines": {
     "node": ">=20"
