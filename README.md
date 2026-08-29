@@ -24,26 +24,26 @@ RecipeFinder/
 
 ## Features
 
-**Recipe discovery** — keyword search, category and area filters, a "surprise me" random pick,
-paginated results grid, and shareable URLs (`/?q=chicken&category=Seafood`).
+**Recipe discovery.** Keyword search, category and area filters, a "surprise me" random pick, a
+paginated results grid and shareable URLs (`/?q=chicken&category=Seafood`).
 
-**Recipe details** — full ingredient table with measures, numbered instructions, tags, source and
-video links, a personal star rating, favourite toggle and an "add to plan" action. Works for both
+**Recipe details.** Full ingredient table with measures, numbered instructions, tags, source and
+video links, a personal star rating, a favorite toggle and an "add to plan" action. Works for both
 API recipes and user-created ones.
 
-**Recipe management** — create, edit and delete your own recipes with client-side validation
-(title, image URL, category, at least one measured ingredient, at least one instruction step,
-numeric bounds on servings and prep time). Drafts survive an accidental reload.
+**Recipe management.** Create, edit and delete your own recipes with client-side validation (title,
+image URL, category, at least one measured ingredient, at least one instruction step, numeric
+bounds on servings and prep time). Drafts survive an accidental reload.
 
-**Favourites** — favourite any recipe (API or user-created), review them all on `/favorites`, and
+**Favorites.** Favorite any recipe (API or user-created), review them all on `/favorites`, and
 remove them from anywhere in the app.
 
-**Ratings** — give any recipe your own 1–5 star score from its details page; it is stored locally,
+**Ratings.** Give any recipe your own 1-5 star score from its details page. It is stored locally,
 shown read-only on the recipe cards, and cleared by tapping the same star again.
 
-**Weekly meal planner** — a 7 day × 3 slot grid with week navigation, assign/replace/move/remove,
+**Weekly meal planner.** A 7 day by 3 slot grid with week navigation, assign/replace/move/remove,
 clear-day and clear-week actions, and a picker that searches TheMealDB alongside your own recipes
-and favourites.
+and favorites.
 
 ## Component library
 
@@ -65,7 +65,7 @@ Each component also has a generated `readme.md` next to its source, produced by 
 `docs-readme` output target from the JSDoc on its props and events.
 
 Accessibility notes: `rf-recipe-card` exposes its title as a real button so keyboard users can
-open a recipe without swallowing events from the favourite button or slotted footer actions, and
+open a recipe without swallowing events from the favorite button or slotted footer actions, and
 `rf-modal` moves focus into the dialog, traps Tab, closes on Escape, restores the previously
 focused element and reference-counts its scroll lock so stacked modals behave correctly.
 
@@ -77,8 +77,8 @@ focused element and reference-counts its scroll lock so stacked modals behave co
   `bindProps` action in `web/src/lib/actions/bindProps.ts`, which re-applies them after
   `customElements.whenDefined()` so they survive lazy upgrade.
 - Custom events are handled with Svelte 5's case-preserving attribute syntax, e.g.
-  `onrfSelect={…}`, `onrfFavoriteToggle={…}`.
-- Slots carry app-specific actions into library chrome — the card `footer` slot holds the
+  `onrfSelect={...}`, `onrfFavoriteToggle={...}`.
+- Slots carry app-specific actions into library chrome. The card `footer` slot holds the
   "Add to plan" / "Delete" buttons and a read-only `rf-rating` for recipes you have scored, the
   modal `footer` slot holds its confirm actions, and the search bar `actions` slot holds the
   random-recipe button.
@@ -113,7 +113,7 @@ cd web
 npm install ../recipe-finder-ui
 ```
 
-Undo that with `npm install recipe-finder-ui@^0.1.0` once you are done — the committed
+Undo that with `npm install recipe-finder-ui@^0.1.0` once you are done. The committed
 `package-lock.json` must resolve to the registry tarball.
 
 ## Starting the development server
@@ -167,7 +167,7 @@ installs it into a temporary project and resolves every declared entry point thr
 `exports` map (`.`, `./components`, `./loader`, `./theme.css`), so the published tarball contains
 only build output and type declarations.
 
-Versioning follows semver against the public surface — the custom element tag names, their props,
+Versioning follows semver against the public surface: the custom element tag names, their props,
 their events, their slots and the `--rf-*` theme tokens. Renaming or removing any of those, or
 changing an event payload, is a major bump; adding a prop, event, slot or token with a
 backwards-compatible default is a minor bump; everything else is a patch. Always release with
@@ -193,43 +193,43 @@ npm install recipe-finder-ui@^0.2.0
 ```
 
 The build only installs the app; `recipe-finder-ui` is pulled from npm like any other dependency,
-so the library is never compiled during deploy. Connect the repository in Netlify and deploy — no
+so the library is never compiled during deploy. Connect the repository in Netlify and deploy. No
 environment variables are required.
 
 ## Assumptions
 
 - **Data source.** Recipes come from [TheMealDB](https://www.themealdb.com) free tier
   (`/api/json/v1/1`, no key). It has no combined-filter endpoint, so category + area filtering is
-  performed by intersecting two filter calls client-side, and it exposes no ratings or servings —
-  ratings in this app are therefore personal: `rf-rating` on the recipe details page records your
-  own score for any recipe, stored locally, and is shown read-only on cards you have rated.
+  performed by intersecting two filter calls client-side. It also exposes no ratings, so ratings
+  here are personal: `rf-rating` on the details page records your own score for any recipe, stores
+  it locally, and shows it read-only on cards you have rated.
 - **Cuisine list.** `list.php?a=list` cannot be used to populate the cuisine filter. It returns
   roughly 190 generic nationality demonyms, while the recipe data only uses 37 area values and
-  formats them inconsistently — a mix of demonyms (`British`, `Spanish`) and country names
+  formats them inconsistently: a mix of demonyms (`British`, `Spanish`) and country names
   (`India`, `United States`, `France`, `Norway`, `Netherlands`, `Argentina`, `Venezuela`,
   `Slovakia`). Selecting `Indian` or `American` from that endpoint's list therefore matches
   nothing. The filter is instead populated from `web/src/lib/api/areas.ts`, generated by
-  `npm run refresh-areas`, which enumerates the whole catalogue (`search.php?f=a…z`) and collects
-  the area values that actually occur. Re-run it if TheMealDB adds cuisines. Around 189 of the 789
-  meals have no area at all and are only reachable by search or category.
+  `npm run refresh-areas`, which enumerates the whole catalogue (`search.php?f=a` through `z`)
+  and collects the area values that actually occur. Re-run it if TheMealDB adds cuisines. Around
+  189 of the 789 meals have no area at all and are only reachable by search or category.
 - **Rate limiting.** The public API throttles bursts of requests, so `web/src/lib/api/mealdb.ts`
   memoises in-flight and completed requests for the session, capped at 50 entries with LRU
   eviction. Random-recipe lookups deliberately bypass the cache. `filter.php` omits category and
   area, so those values are backfilled from the active filter before the summary is stored.
-- **Persistence.** There is no backend. User recipes, favourites, ratings and meal plans live in
+- **Persistence.** There is no backend. User recipes, favorites, ratings and meal plans live in
   `localStorage` under the `rf:` key prefix and are therefore per-browser. Clearing site data
   resets the app. Stored values are shape-validated on read and namespaced by a schema version, so
   corrupt or outdated data is discarded rather than crashing the app, and a failed write (quota
   exceeded, private browsing) surfaces a banner instead of silently losing data. Changes made in
   one tab are picked up by others through the `storage` event.
-- **Denormalised snapshots.** Favourites and planner slots store a copy of the recipe summary so
+- **Denormalised snapshots.** Favorites and planner slots store a copy of the recipe summary so
   they render without a network call; creating, editing and deleting a user recipe cascades into
   both, and deleting also drops the recipe's rating.
 - **Rendering mode.** `web/src/routes/+layout.ts` sets `ssr = false`. The app is entirely
   localStorage-driven and renders custom elements, so client-side rendering avoids hydration
   mismatches and unresolved-element flashes.
 - **Ownership.** Only recipes created in the app are editable or deletable; API recipes are
-  read-only but can still be favourited and planned.
+  read-only but can still be favorited and planned.
 - **Planner shape.** A week runs Monday to Sunday with three slots per day (breakfast, lunch,
   dinner). Plans are archived per ISO week key, so navigating back to a previous week restores it.
 - **Images.** Recipe images are referenced by URL rather than uploaded; the form validates that the
