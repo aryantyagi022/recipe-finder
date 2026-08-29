@@ -7,6 +7,7 @@
 	import { getRecipeById } from '$lib/api/mealdb';
 	import { favorites } from '$lib/state/favorites.svelte';
 	import { planner } from '$lib/state/planner.svelte';
+	import { ratings } from '$lib/state/ratings.svelte';
 	import { isUserRecipeId, userRecipes } from '$lib/state/recipes.svelte';
 	import type { Recipe, RecipeSummary } from '$lib/types';
 	import { WEEK_DAYS, formatWeekRange } from '$lib/utils/date';
@@ -78,6 +79,7 @@
 		userRecipes.remove(recipe.id);
 		favorites.remove(recipe.id);
 		planner.removeRecipeEverywhere(recipe.id);
+		ratings.clear(recipe.id);
 		confirmDelete = false;
 		void goto('/my-recipes');
 	}
@@ -142,6 +144,21 @@
 							</div>
 						{/if}
 					</dl>
+
+					<div class="rating">
+						<rf-rating
+							use:bindProps={{
+								value: ratings.get(recipe.id),
+								label: 'Your rating'
+							}}
+							onrfRate={(event) => recipe && ratings.set(recipe.id, event.detail)}
+						></rf-rating>
+						<span class="rating-hint">
+							{ratings.get(recipe.id) > 0
+								? `You rated this ${ratings.get(recipe.id)} of 5 — tap the same star to clear it.`
+								: 'Rate this recipe'}
+						</span>
+					</div>
 
 					<div class="actions">
 						<button
@@ -324,6 +341,19 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: var(--rf-space-sm);
+	}
+
+	.rating {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: var(--rf-space-sm);
+		margin: 0 0 var(--rf-space-lg);
+	}
+
+	.rating-hint {
+		font-size: 0.82rem;
+		color: var(--rf-color-text-muted);
 	}
 
 	.planned {

@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { bindProps } from '$lib/actions/bindProps';
 	import { favorites } from '$lib/state/favorites.svelte';
+	import { ratings } from '$lib/state/ratings.svelte';
 	import type { RecipeSummary } from '$lib/types';
 	import type { RecipeCardData } from 'recipe-finder-ui';
 
@@ -44,6 +45,15 @@
 			onrfFavoriteToggle={() => handleFavorite(recipe)}
 		>
 			<div slot="footer" class="actions">
+				{#if ratings.get(recipe.id) > 0}
+					<rf-rating
+						use:bindProps={{
+							value: ratings.get(recipe.id),
+							readonly: true,
+							label: `Your rating for ${recipe.title}`
+						}}
+					></rf-rating>
+				{/if}
 				{#if onplan}
 					<button type="button" class="btn btn-secondary" onclick={() => onplan?.(recipe)}>
 						Add to plan
@@ -64,6 +74,7 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 6px;
+		align-items: center;
 	}
 
 	.actions .btn {

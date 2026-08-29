@@ -4,6 +4,7 @@
 	import RecipeGrid from '$lib/components/RecipeGrid.svelte';
 	import { favorites } from '$lib/state/favorites.svelte';
 	import { planner } from '$lib/state/planner.svelte';
+	import { ratings } from '$lib/state/ratings.svelte';
 	import { userRecipes } from '$lib/state/recipes.svelte';
 	import type { RecipeSummary } from '$lib/types';
 
@@ -27,6 +28,7 @@
 		userRecipes.remove(pendingDelete.id);
 		favorites.remove(pendingDelete.id);
 		planner.removeRecipeEverywhere(pendingDelete.id);
+		ratings.clear(pendingDelete.id);
 		pendingDelete = null;
 	}
 </script>

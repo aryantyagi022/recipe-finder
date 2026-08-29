@@ -52,6 +52,7 @@ declare global {
 			};
 			'rf-tag': {
 				label?: string;
+				value?: string;
 				tone?: TagTone;
 				removable?: boolean;
 				onrfRemove?: (event: CustomEvent<string>) => void;

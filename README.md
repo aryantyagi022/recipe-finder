@@ -28,8 +28,8 @@ RecipeFinder/
 paginated results grid, and shareable URLs (`/?q=chicken&category=Seafood`).
 
 **Recipe details** — full ingredient table with measures, numbered instructions, tags, source and
-video links, favourite toggle and an "add to plan" action. Works for both API recipes and
-user-created ones.
+video links, a personal star rating, favourite toggle and an "add to plan" action. Works for both
+API recipes and user-created ones.
 
 **Recipe management** — create, edit and delete your own recipes with client-side validation
 (title, image URL, category, at least one measured ingredient, at least one instruction step,
@@ -37,6 +37,9 @@ numeric bounds on servings and prep time). Drafts survive an accidental reload.
 
 **Favourites** — favourite any recipe (API or user-created), review them all on `/favorites`, and
 remove them from anywhere in the app.
+
+**Ratings** — give any recipe your own 1–5 star score from its details page; it is stored locally,
+shown read-only on the recipe cards, and cleared by tapping the same star again.
 
 **Weekly meal planner** — a 7 day × 3 slot grid with week navigation, assign/replace/move/remove,
 clear-day and clear-week actions, and a picker that searches TheMealDB alongside your own recipes
@@ -76,8 +79,9 @@ focused element and reference-counts its scroll lock so stacked modals behave co
 - Custom events are handled with Svelte 5's case-preserving attribute syntax, e.g.
   `onrfSelect={…}`, `onrfFavoriteToggle={…}`.
 - Slots carry app-specific actions into library chrome — the card `footer` slot holds the
-  "Add to plan" / "Delete" buttons, the modal `footer` slot holds its confirm actions, and the
-  search bar `actions` slot holds the random-recipe button.
+  "Add to plan" / "Delete" buttons and a read-only `rf-rating` for recipes you have scored, the
+  modal `footer` slot holds its confirm actions, and the search bar `actions` slot holds the
+  random-recipe button.
 - Custom element tag typings live in `web/src/app.d.ts` so `svelte-check` stays clean.
 
 ## Prerequisites
@@ -197,7 +201,8 @@ environment variables are required.
 - **Data source.** Recipes come from [TheMealDB](https://www.themealdb.com) free tier
   (`/api/json/v1/1`, no key). It has no combined-filter endpoint, so category + area filtering is
   performed by intersecting two filter calls client-side, and it exposes no ratings or servings —
-  `rf-rating` is therefore driven by user-supplied values on user recipes only.
+  ratings in this app are therefore personal: `rf-rating` on the recipe details page records your
+  own score for any recipe, stored locally, and is shown read-only on cards you have rated.
 - **Cuisine list.** `list.php?a=list` cannot be used to populate the cuisine filter. It returns
   roughly 190 generic nationality demonyms, while the recipe data only uses 37 area values and
   formats them inconsistently — a mix of demonyms (`British`, `Spanish`) and country names
@@ -211,7 +216,7 @@ environment variables are required.
   memoises in-flight and completed requests for the session, capped at 50 entries with LRU
   eviction. Random-recipe lookups deliberately bypass the cache. `filter.php` omits category and
   area, so those values are backfilled from the active filter before the summary is stored.
-- **Persistence.** There is no backend. User recipes, favourites and meal plans live in
+- **Persistence.** There is no backend. User recipes, favourites, ratings and meal plans live in
   `localStorage` under the `rf:` key prefix and are therefore per-browser. Clearing site data
   resets the app. Stored values are shape-validated on read and namespaced by a schema version, so
   corrupt or outdated data is discarded rather than crashing the app, and a failed write (quota
@@ -219,7 +224,7 @@ environment variables are required.
   one tab are picked up by others through the `storage` event.
 - **Denormalised snapshots.** Favourites and planner slots store a copy of the recipe summary so
   they render without a network call; creating, editing and deleting a user recipe cascades into
-  both.
+  both, and deleting also drops the recipe's rating.
 - **Rendering mode.** `web/src/routes/+layout.ts` sets `ssr = false`. The app is entirely
   localStorage-driven and renders custom elements, so client-side rendering avoids hydration
   mismatches and unresolved-element flashes.

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { favorites } from '$lib/state/favorites.svelte';
 import { planner } from '$lib/state/planner.svelte';
+import { ratings } from '$lib/state/ratings.svelte';
 import { userRecipes } from '$lib/state/recipes.svelte';
 import type { RecipeSummary } from '$lib/types';
 import { shiftWeek } from '$lib/utils/date';
@@ -192,5 +193,51 @@ describe('assignTo', () => {
 		expect(planner.weekKey).toBe(selected);
 		expect(planner.plannedCount).toBe(0);
 		expect(planner.mealIn(target, 4, 'breakfast')?.title).toBe('Curry');
+	});
+});
+
+describe('ratings store', () => {
+	it('stores, overwrites and clears a score', () => {
+		ratings.clearAll();
+
+		expect(ratings.get('1')).toBe(0);
+
+		ratings.set('1', 4);
+		expect(ratings.get('1')).toBe(4);
+
+		ratings.set('1', 2);
+		expect(ratings.get('1')).toBe(2);
+
+		ratings.clear('1');
+		expect(ratings.get('1')).toBe(0);
+	});
+
+	it('treats a zero or out-of-range score as clearing the rating', () => {
+		ratings.clearAll();
+		ratings.set('1', 3);
+
+		ratings.set('1', 0);
+		expect(ratings.get('1')).toBe(0);
+
+		ratings.set('2', 9);
+		expect(ratings.get('2')).toBe(0);
+	});
+
+	it('rates recipes independently', () => {
+		ratings.clearAll();
+		ratings.set('1', 5);
+		ratings.set('2', 1);
+
+		ratings.clear('1');
+
+		expect(ratings.get('1')).toBe(0);
+		expect(ratings.get('2')).toBe(1);
+	});
+
+	it('rounds fractional scores', () => {
+		ratings.clearAll();
+		ratings.set('1', 3.6);
+
+		expect(ratings.get('1')).toBe(4);
 	});
 });
